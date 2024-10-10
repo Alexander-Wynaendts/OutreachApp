@@ -10,6 +10,8 @@ def linkedin_founder_scrape(founder_name):
     query = f"site: linkedin.com/in/ '{founder_name}'"
     url = f"https://www.google.com/search?q={query}"
 
+    print(url)
+
     # Appeler la fonction asynchrone google_scrape et attendre le résultat
     soup = asyncio.run(google_scrape(url))
 

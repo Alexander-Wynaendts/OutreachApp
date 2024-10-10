@@ -6,7 +6,18 @@ from bs4 import BeautifulSoup
 async def google_scrape(url):
 
     # Lancer le navigateur headless avec Pyppeteer
-    browser = await launch(headless=False, args=['--no-sandbox'])
+    browser = await launch(
+    headless=True,
+    args=[
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',  # Minimize memory usage
+        '--disable-gpu',            # Disable GPU to save memory
+        '--no-zygote',              # Disable zygote processes to save resources
+        '--single-process',         # Run in single process mode
+        '--window-size=1280x800'
+    ]
+)
     page = await browser.newPage()
 
     # Simuler un vrai User-Agent pour éviter d'être détecté
