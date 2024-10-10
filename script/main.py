@@ -182,6 +182,8 @@ def linkedin_google_scrape(enterprise_name, founder_names):
 
     print(linkedin_founder_profiles, linkedin_company_profile)
 
+    print(linkedin_founder_profiles, linkedin_company_profile)
+
     return linkedin_founder_profiles, linkedin_company_profile
 
 linkedin_google_scrape("Entourage", "Stephan King, Alexandre Demain, Alexander Wynaendts")

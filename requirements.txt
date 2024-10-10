@@ -1,15 +1,14 @@
 # Flask and server
-quart
-Werkzeug==2.0.3
+Flask
 gunicorn
 
 # Scraping and web automation
 requests
 beautifulsoup4
-scrapingbee
 
 # Environment variables
 python-dotenv
+pyppeteer
 
 # OpenAI API
 openai==0.28.0
