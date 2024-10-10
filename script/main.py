@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-from google_scrape import google_scrape
+from .google_scrape import google_scrape
 import asyncio
 import warnings
 warnings.filterwarnings("ignore")
