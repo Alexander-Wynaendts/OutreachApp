@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, send_file, Response
-import subprocess
+from flask import Flask, render_template, request, send_file
 import pandas as pd
 import io
+import zipfile
 from script.main import main
 
 app = Flask(__name__)
@@ -13,18 +13,19 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
+        # Get the uploaded ZIP folder from the request
         file = request.files.get('file')
         if not file:
             return "No file uploaded", 400
 
-        df = pd.read_csv(file)
+        # Read the ZIP file in memory without storing it
+        zip_data = zipfile.ZipFile(file)
 
-        # Call the main processing function
-        startup_data = main(df)
+        # Extract files in-memory as needed
+        files = {name: zip_data.read(name) for name in zip_data.namelist()}
 
-        # Log the processed dataframe
-        if startup_data is None:
-            return "Error processing file", 400
+        # Pass the extracted files to the main function for processing
+        startup_data = main(files)
 
         # Convert the processed DataFrame to CSV in-memory using UTF-8 encoding
         output = io.BytesIO()
@@ -37,15 +38,6 @@ def upload_file():
     except Exception as e:
         print(f"Error occurred: {str(e)}")
         return f"Error processing file: {str(e)}", 500
-
-# Endpoint to get real-time log output
-@app.route('/logs')
-def stream_logs():
-    def generate():
-        with subprocess.Popen(["tail", "-f", "path_to_your_log_file.log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
-            for line in iter(p.stdout.readline, b''):
-                yield line.decode('utf-8')
-    return Response(generate(), mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(debug=True)

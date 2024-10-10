@@ -8,7 +8,6 @@ beautifulsoup4
 
 # Environment variables
 python-dotenv
-pyppeteer
 
 # OpenAI API
 openai==0.28.0
