@@ -1,8 +1,10 @@
+import pandas as pd
 import requests
 import os
 from dotenv import load_dotenv
 import re
 import warnings
+from concurrent.futures import ThreadPoolExecutor
 warnings.filterwarnings("ignore")
 
 load_dotenv()
@@ -45,6 +47,21 @@ def linkedin_founder_scrape(founder_name):
         })
 
     return linkedin_founder_profile
+
+def founder_website_retrieval(linkedin_url):
+
+    # Define the Scrapin API URL
+    url = "https://api.scrapin.io/enrichment/profile"
+    querystring = {
+        "apikey": scrapin_api,
+        "linkedInUrl": linkedin_url
+    }
+    response = requests.get(url, params=querystring)
+
+    linkedin_company_url = response.json()["company"]["linkedInUrl"]
+    website_url = response.json()["company"]["websiteUrl"]
+
+    return linkedin_company_url, website_url
 
 def linkedin_google_scrape(enterprise_name, founder_names):
     # Helper function to normalize text: remove spaces, special characters, accents, and convert to lowercase
@@ -115,26 +132,28 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     # Step 4: Return only the profiles where the title or description contain terms_to_check or enterprise_name
     return linkedin_founder_profiles, linkedin_company_url, website_url
 
-
-def founder_website_retrieval(linkedin_url):
-
-    # Define the Scrapin API URL
-    url = "https://api.scrapin.io/enrichment/profile"
-    querystring = {
-        "apikey": scrapin_api,
-        "linkedInUrl": linkedin_url
-    }
-    response = requests.get(url, params=querystring)
-
-    linkedin_company_url = response.json()["company"]["linkedInUrl"]
-    website_url = response.json()["company"]["websiteUrl"]
-
-    return linkedin_company_url, website_url
-
 def search_website_url(startup_data):
+    # Split the data into rows with and without website URLs
+    data_with_no_website = startup_data[startup_data['Website'].isna()]
+    data_with_website = startup_data[startup_data['Website'].notna()]
 
+    # Define a helper function to process each row
+    def process_row(row):
+        name = row['Name']
+        founders_name = row['Founders Name']
+        # Call your linkedin_google_scrape function with the appropriate parameters
+        linkedin_data = linkedin_google_scrape(name, founders_name)
+        return linkedin_data
 
-    linkedin_founder_profiles, linkedin_company_url, website_url = linkedin_google_scrape("Entourage", "Assouf Man, Jer Miel, Alexander Wynaendts")
-    print(linkedin_founder_profiles, linkedin_company_url, website_url)
+    # Use ThreadPoolExecutor to parallelize scraping
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(executor.map(process_row, data_with_no_website.iterrows()))
+
+    # Convert the results back into DataFrame format and assign back to data_with_no_website
+    results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "Website URL"])
+    data_with_no_website = pd.concat([data_with_no_website.reset_index(drop=True), results_df], axis=1)
+
+    # Combine the original data with website URLs and the new scraped data
+    startup_data = pd.concat([data_with_website, data_with_no_website], ignore_index=True)
 
     return startup_data

@@ -6,10 +6,10 @@ def main(files):
 
     startup_data = cbe_formatting(files)
 
-    startup_data = startup_data[:20]
+    startup_data = startup_data[1000:1100]
 
     startup_data = cbe_screening(startup_data)
 
-    #startup_data = search_website_url(startup_data)
+    startup_data = search_website_url(startup_data)
 
     return startup_data
