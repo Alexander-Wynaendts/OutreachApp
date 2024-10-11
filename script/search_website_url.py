@@ -161,8 +161,10 @@ def search_website_url(startup_data):
     # Convert the results into a DataFrame
     results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "Website URL"])
 
-    # Assign the new website URLs back to the rows that previously had no website
+    # Assign the new values (LinkedIn Founder, LinkedIn URL, and Website URL) to the corresponding rows
     data_with_no_website.reset_index(drop=True, inplace=True)
+    data_with_no_website['LinkedIn Founder'] = results_df['LinkedIn Founder']
+    data_with_no_website['LinkedIn URL'] = results_df['LinkedIn URL']
     data_with_no_website['Website URL'] = results_df['Website URL']
 
     # Combine the rows with existing Website URLs and newly updated rows
