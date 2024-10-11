@@ -5,8 +5,9 @@ import os
 from dotenv import load_dotenv
 
 import time
+import random
 import re
-import time
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 username = os.getenv("PROXY_USERNAME")
@@ -28,7 +29,7 @@ def cbe_page_scraping(enterprise_number):
 
     try:
         # Make a request to the website using the proxy
-        response = requests.get(website_url, headers=headers, proxies=proxies, verify=False, timeout=10)
+        response = requests.get(website_url, headers=headers, timeout=10)
 
         # Parse the page content
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -170,24 +171,37 @@ def cbe_analysis(enterprise_number):
 
     return (enterprise_number, enterprise_name, cbe_info, email, website, founder_names, founding_year)
 
+import time
+import random
+from concurrent.futures import ThreadPoolExecutor
+
 def cbe_screening(startup_data):
     """
-    Test the process for each startup based on the given enterprise number and return the cbe_info, website, email,
-    and founding year if it's a valid startup.
+    Process each startup based on the given enterprise number in parallel using ThreadPoolExecutor.
+    It returns the CBE info, website, email, and founding year if it's a valid startup.
     The startup_data is assumed to be a DataFrame or dictionary-like object containing the 'EntityNumber' of the startups.
     """
 
     all_results = []
 
-    # Process each startup sequentially
-    for idx, enterprise_number in enumerate(startup_data['EntityNumber']):
-        print(f"Processing {idx + 1}/{len(startup_data)}")
-        result = cbe_analysis(enterprise_number)
-        all_results.append(result)
+    # Define a helper function for processing each row
+    def process_enterprise(enterprise_number):
+        # Simulating a delay for each request
+        time.sleep(random.uniform(5, 15))  # Random sleep between 1 and 3 seconds
+        return cbe_analysis(enterprise_number)
+
+    # Use ThreadPoolExecutor to process each enterprise in parallel
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        # Display progress while processing each startup
+        all_results = []
+        for idx, result in enumerate(executor.map(process_enterprise, startup_data['EntityNumber'])):
+            all_results.append(result)
+            print(f"Progress: {idx + 1}/{len(startup_data)}")  # Display progress
 
     # Prepare to update the DataFrame with the results
     rows_to_drop = []
-    for enterprise_number, enterprise_name, cbe_info, email, website_url, founder_names, founding_year in all_results:
+    for result in all_results:
+        enterprise_number, enterprise_name, cbe_info, email, website_url, founder_names, founding_year = result
         if cbe_info is None:
             rows_to_drop.append(enterprise_number)
         else:

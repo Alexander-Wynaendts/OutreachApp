@@ -47,7 +47,4 @@ def cbe_formatting(files):
     # Get unique EntityNumbers
     startup_data = pd.DataFrame(filtered_df["EntityNumber"].drop_duplicates(), columns=["EntityNumber"])
 
-    # Print the number of unique EntityNumbers
-    print("Length of relevant enterprises (Nace Code based):", len(startup_data))
-
     return startup_data

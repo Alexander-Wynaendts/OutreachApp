@@ -97,7 +97,6 @@ def linkedin_google_scrape(enterprise_name, founder_names):
 
             # First check: if enterprise_name is in the title or description
             if normalize(enterprise_name) in normalized_profile_text:
-                print(f"NAME MATCH {linkedin_url}")
                 linkedin_founder_profiles.append({
                     'LinkedIn Title': linkedin_title,
                     'LinkedIn Description': linkedin_description,
@@ -105,12 +104,11 @@ def linkedin_google_scrape(enterprise_name, founder_names):
                 })
                 # Run website retrieval for the first profile that matches the enterprise_name
                 linkedin_company_url= "yes.om"
-                #linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
+                linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
                 break  # Stop once we find a match with the enterprise_name
 
             # Second check: if any term from terms_to_check is in the title or description
             elif any(normalize(term) in normalized_profile_text for term in terms_to_check):
-                print(f"TERM MATCH {linkedin_url}")
                 linkedin_founder_profiles.append({
                     'LinkedIn Title': linkedin_title,
                     'LinkedIn Description': linkedin_description,
@@ -123,7 +121,7 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     # After adding all linkedin_founder_profiles, check if no enterprise_name was found and use term match
     if linkedin_company_url is None and term_matched_profile:
         print(f"Using TERM MATCH {term_matched_profile['LinkedIn URL']} for website retrieval")
-        #linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
+        linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
 
     # Step 3: If no profiles contained the enterprise name or any terms from terms_to_check, set a fallback
     if not linkedin_founder_profiles:
@@ -138,7 +136,8 @@ def search_website_url(startup_data):
     data_with_website = startup_data[startup_data['Website'].notna()]
 
     # Define a helper function to process each row
-    def process_row(row):
+    def process_row(row_tuple):
+        index, row = row_tuple  # Unpack the tuple to get index and row
         name = row['Name']
         founders_name = row['Founders Name']
         # Call your linkedin_google_scrape function with the appropriate parameters
