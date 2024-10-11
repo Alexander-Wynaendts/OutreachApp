@@ -136,7 +136,6 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     # If no match found, use the first matched profile based on terms
     if not linkedin_company_url:
         if term_matched_profile:
-            print(f"Using TERM MATCH {term_matched_profile['LinkedIn URL']} for website retrieval")
             linkedin_company_url = "The Linkedin URL"
             website_url = "The Website URL"
             #linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
@@ -148,8 +147,8 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     return linkedin_founder_profiles, linkedin_company_url, website_url
 
 def search_website_url(startup_data):
-    data_with_no_website = startup_data[startup_data['Website'].isna()]
-    data_with_website = startup_data[startup_data['Website'].notna()]
+    data_with_no_website = startup_data[startup_data['Website URL'].isna()]
+    data_with_website = startup_data[startup_data['Website URL'].notna()]
 
     def process_row(row_tuple):
         index, row = row_tuple
