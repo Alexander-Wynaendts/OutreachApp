@@ -117,8 +117,6 @@ def linkedin_google_scrape(enterprise_name, founder_names):
                     'LinkedIn Description': linkedin_description,
                     'LinkedIn URL': linkedin_url
                 })
-                linkedin_company_url = "The Linkedin URL"
-                website_url = "The Website URL"
                 linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
                 break
 
@@ -136,8 +134,6 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     # If no match found, use the first matched profile based on terms
     if not linkedin_company_url:
         if term_matched_profile:
-            linkedin_company_url = "The Linkedin URL"
-            website_url = "The Website URL"
             linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
         else:
             linkedin_founder_profiles = "-"
@@ -162,13 +158,14 @@ def search_website_url(startup_data):
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(process_row, data_with_no_website.iterrows()))
 
-    # Ensure the results contain valid data or "-"
-    results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "New Website URL"])
+    # Convert the results into a DataFrame
+    results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "Website URL"])
 
-    # Concatenate the results with the original data, avoiding duplicate column names
-    data_with_no_website = pd.concat([data_with_no_website.reset_index(drop=True), results_df], axis=1)
+    # Assign the new website URLs back to the rows that previously had no website
+    data_with_no_website.reset_index(drop=True, inplace=True)
+    data_with_no_website['Website URL'] = results_df['Website URL']
 
-    # Combine the rows with existing Website URLs and newly processed rows
+    # Combine the rows with existing Website URLs and newly updated rows
     startup_data = pd.concat([data_with_website, data_with_no_website], ignore_index=True)
 
     return startup_data
