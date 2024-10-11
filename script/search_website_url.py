@@ -20,7 +20,7 @@ def linkedin_founder_scrape(founder_name):
     url = "https://api.dataforseo.com/v3/serp/google/organic/live/advanced"
 
     # Correct the payload format
-    payload = f"[{{\"keyword\":\"{query}\", \"location_code\":2826, \"language_code\":\"en\", \"device\":\"desktop\", \"depth\":5}}]"
+    payload = f"[{{\"keyword\":\"{query}\", \"location_code\":2826, \"language_code\":\"en\", \"device\":\"desktop\", \"depth\":5}}]".encode('utf-8')
 
     headers = {
         'Authorization': f'Basic {dataforseo_auth}',  # Using the API key from .env
@@ -28,7 +28,6 @@ def linkedin_founder_scrape(founder_name):
     }
     # Send the POST request to the API
     response = requests.request("POST", url, headers=headers, data=payload)
-
     # Check if the response is successful
     if response.json()["status_code"] == 20000:
         json_data = response.json()
@@ -43,11 +42,14 @@ def linkedin_founder_scrape(founder_name):
         })
         return linkedin_founder_profile
 
-    # Loop through each item in the 'items' list
+
     for item in items:
-        linkedin_title = item.get('title', '-')
-        linkedin_description = item.get('description', '-')
-        linkedin_url = item.get('url', '-')
+        if item:  # Ensure the item is not None
+            linkedin_title = item.get('title', '-')
+            linkedin_description = item.get('description', '-')
+            linkedin_url = item.get('url', '-')
+        else:
+            linkedin_title = linkedin_description = linkedin_url = "-"
 
         # Append the extracted data to the linkedin_founder_profile list
         linkedin_founder_profile.append({
@@ -71,17 +73,16 @@ def founder_website_retrieval(linkedin_url):
     if response.status_code == 200:
         json_data = response.json()
         # Safeguard against missing 'company' key in the JSON response
-        if json_data and 'company' in json_data:
+        if json_data and json_data["company"]:
             linkedin_company_url = json_data["company"].get("linkedInUrl", "")
             website_url = json_data["company"].get("websiteUrl", "")
             return linkedin_company_url, website_url
         else:
             # Return empty values if no company data found
-            return "", ""
+            return "-", "-"
     else:
         # Handle the case where the API request fails or the response is invalid
-        print(f"Error: Failed to retrieve website data for {linkedin_url}")
-        return "", ""
+        return "-", "-"
 
 def linkedin_google_scrape(enterprise_name, founder_names):
     def normalize(text):
@@ -103,6 +104,9 @@ def linkedin_google_scrape(enterprise_name, founder_names):
             continue
 
         for profile in founder_profiles:
+            if not profile:
+                continue
+
             linkedin_title = profile.get('LinkedIn Title', '-')
             linkedin_description = profile.get('LinkedIn Description', '-')
             linkedin_url = profile.get('LinkedIn URL', '-')

@@ -40,8 +40,6 @@ def main(files):
     # Search for website URLs in the data
     startup_data = search_website_url(startup_data)
 
-    print("Website URL retrieved!")
-
     # Record the end time and calculate the elapsed time
     end_time = time.time()
     elapsed_time = end_time - start_time
