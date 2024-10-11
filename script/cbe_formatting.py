@@ -19,7 +19,7 @@ def cbe_formatting(files):
     main_df = pd.merge(main_df, enterprise_df, left_on="EntityNumber", right_on="EnterpriseNumber", how="left")
 
     total_enterprise = pd.DataFrame(main_df["EntityNumber"].drop_duplicates(), columns=["EntityNumber"])
-    print("Length of total enterprises:", len(total_enterprise))
+    print("Total enterprises:", len(total_enterprise))
 
     # Define the is_relevant function here
     def is_relevant(group):

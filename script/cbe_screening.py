@@ -37,12 +37,14 @@ def cbe_page_scraping(enterprise_number):
         # Check for CAPTCHA
         captcha_header = soup.find('h3')
         if captcha_header and "CAPTCHA Test" in captcha_header.get_text():
-            return "No Data"
+            print(f"Captcha detected, retrying in 60 seconds...")
+            time.sleep(60)
+            return "-"
 
         # Check if the table with id 'table' is present
         table = soup.find('div', {'id': 'table'})
         if not table:
-            return "No Data"
+            return "-"
 
         # Extract data from the table
         enterprise_data = []
@@ -73,7 +75,7 @@ def cbe_page_scraping(enterprise_number):
 
     except requests.exceptions.RequestException as e:
         print(f"Error occurred while scraping: {e}")
-        return "No Data"
+        return "-"
 
 def cbe_data_extraction(cbe_info):
     """
@@ -136,7 +138,7 @@ def cbe_analysis(enterprise_number):
     cbe_info = cbe_page_scraping(enterprise_number)
 
     # Check if the first attempt was successful
-    if not cbe_info or cbe_info == "No Data":
+    if not cbe_info or cbe_info == "-":
         # If it fails, wait for 5 seconds and retry
         print(f"First attempt failed, retrying in 5 seconds...")
         time.sleep(5)
@@ -145,12 +147,10 @@ def cbe_analysis(enterprise_number):
         cbe_info = cbe_page_scraping(enterprise_number)
 
         # If the second attempt succeeds, print a reassuring message
-        if cbe_info and cbe_info != "No Data":
+        if cbe_info and cbe_info != "-":
             print("Success on the second attempt. Moving forward.")
-
-    # If both attempts failed, return "No Data"
-    if not cbe_info or cbe_info == "No Data":
-        return (enterprise_number, "No Data", None, None, None, None, None)
+        else:
+            return (enterprise_number, "-", None, None, None, None, None)
 
     # Extract enterprise name, founder names, email, website, and founding year
     enterprise_name, founder_names, email, website, founding_year = cbe_data_extraction(cbe_info)
@@ -187,7 +187,7 @@ def cbe_screening(startup_data):
     # Define a helper function for processing each row
     def process_enterprise(enterprise_number):
         # Simulating a delay for each request
-        time.sleep(random.uniform(5, 15))  # Random sleep between 1 and 3 seconds
+        time.sleep(random.uniform(10, 30))  # Random sleep between 1 and 3 seconds
         return cbe_analysis(enterprise_number)
 
     # Use ThreadPoolExecutor to process each enterprise in parallel
@@ -209,7 +209,7 @@ def cbe_screening(startup_data):
             startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "CBE Info"] = cbe_info
             startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Name"] = enterprise_name
             startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Email"] = email
-            startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Website"] = website_url
+            startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Website URL"] = website_url
             startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Founders Name"] = ', '.join(founder_names)
             startup_data.loc[startup_data["EntityNumber"] == enterprise_number, "Founding Year"] = founding_year
 
