@@ -147,6 +147,7 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     return linkedin_founder_profiles, linkedin_company_url, website_url
 
 def search_website_url(startup_data):
+    # Split the data into rows with and without website URLs
     data_with_no_website = startup_data[startup_data['Website URL'].isna()]
     data_with_website = startup_data[startup_data['Website URL'].notna()]
 
@@ -157,13 +158,17 @@ def search_website_url(startup_data):
         linkedin_data = linkedin_google_scrape(name, founders_name)
         return linkedin_data
 
+    # Process each row without a website URL
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(process_row, data_with_no_website.iterrows()))
 
     # Ensure the results contain valid data or "-"
-    results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "Website URL"])
+    results_df = pd.DataFrame(results, columns=["LinkedIn Founder", "LinkedIn URL", "New Website URL"])
+
+    # Concatenate the results with the original data, avoiding duplicate column names
     data_with_no_website = pd.concat([data_with_no_website.reset_index(drop=True), results_df], axis=1)
 
+    # Combine the rows with existing Website URLs and newly processed rows
     startup_data = pd.concat([data_with_website, data_with_no_website], ignore_index=True)
 
     return startup_data
