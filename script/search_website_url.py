@@ -119,7 +119,7 @@ def linkedin_google_scrape(enterprise_name, founder_names):
                 })
                 linkedin_company_url = "The Linkedin URL"
                 website_url = "The Website URL"
-                #linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
+                linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
                 break
 
             # Second check: if any term from terms_to_check is in the title or description
@@ -138,7 +138,7 @@ def linkedin_google_scrape(enterprise_name, founder_names):
         if term_matched_profile:
             linkedin_company_url = "The Linkedin URL"
             website_url = "The Website URL"
-            #linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
+            linkedin_company_url, website_url = founder_website_retrieval(term_matched_profile['LinkedIn URL'])
         else:
             linkedin_founder_profiles = "-"
             linkedin_company_url = "-"
