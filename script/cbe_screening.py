@@ -9,22 +9,11 @@ import random
 import re
 from concurrent.futures import ThreadPoolExecutor
 
-load_dotenv()
-username = os.getenv("PROXY_USERNAME")
-password = os.getenv("PROXY_PASSWORD")
-proxy = os.getenv("PROXY_URL")
-proxy_auth = "{}:{}@{}".format(username, password, proxy)
-proxies = {
-    "http": "http://{}".format(proxy_auth),
-    "https": "http://{}".format(proxy_auth)
-}
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-
 def cbe_page_scraping(enterprise_number):
     """
     Scrape the CBE website for a given enterprise_number using requests and a proxy.
     """
-
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
     website_url = f"https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer={enterprise_number}"
 
     try:
