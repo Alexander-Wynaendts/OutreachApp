@@ -69,6 +69,10 @@ def founder_website_retrieval(linkedin_url):
     }
     response = requests.get(url, params=querystring)
 
+    print(f"THE STATUS: {response.status_code}")
+    print(f"THE repsonde: {response}")
+    print(f"THE TEST: {response.json()}")
+
     # Check if the response is valid
     if response.status_code == 200:
         json_data = response.json()
@@ -88,7 +92,16 @@ def linkedin_google_scrape(enterprise_name, founder_names):
     def normalize(text):
         return re.sub(r'[\s\-]+', '', text.lower())
 
-    terms_to_check = ['entrepreneur', 'founder']
+    terms_to_check = [
+    # English
+    'entrepreneur', 'founder',
+    # French
+    'entrepreneur', 'fondateur',
+    # Dutch
+    'ondernemer', 'oprichter',
+    # German
+    'unternehmer', 'gründer',
+]
 
     linkedin_founder_profiles = []
     linkedin_company_url = None
@@ -104,36 +117,34 @@ def linkedin_google_scrape(enterprise_name, founder_names):
             continue
 
         for profile in founder_profiles:
-            if not profile:
-                continue
+            if profile:
+                linkedin_title = profile.get('LinkedIn Title', '-')
+                linkedin_description = profile.get('LinkedIn Description', '-')
+                linkedin_url = profile.get('LinkedIn URL', '-')
 
-            linkedin_title = profile.get('LinkedIn Title', '-')
-            linkedin_description = profile.get('LinkedIn Description', '-')
-            linkedin_url = profile.get('LinkedIn URL', '-')
+                profile_text = f"{linkedin_title} {linkedin_description}"
+                normalized_profile_text = normalize(profile_text)
 
-            profile_text = f"{linkedin_title} {linkedin_description}"
-            normalized_profile_text = normalize(profile_text)
+                # First check: if enterprise_name is in the title or description
+                if normalize(enterprise_name) in normalized_profile_text:
+                    linkedin_founder_profiles.append({
+                        'LinkedIn Title': linkedin_title,
+                        'LinkedIn Description': linkedin_description,
+                        'LinkedIn URL': linkedin_url
+                    })
+                    linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
+                    break
 
-            # First check: if enterprise_name is in the title or description
-            if normalize(enterprise_name) in normalized_profile_text:
-                linkedin_founder_profiles.append({
-                    'LinkedIn Title': linkedin_title,
-                    'LinkedIn Description': linkedin_description,
-                    'LinkedIn URL': linkedin_url
-                })
-                linkedin_company_url, website_url = founder_website_retrieval(linkedin_url)
-                break
-
-            # Second check: if any term from terms_to_check is in the title or description
-            elif any(normalize(term) in normalized_profile_text for term in terms_to_check):
-                linkedin_founder_profiles.append({
-                    'LinkedIn Title': linkedin_title,
-                    'LinkedIn Description': linkedin_description,
-                    'LinkedIn URL': linkedin_url
-                })
-                # Store the first profile that matches
-                if term_matched_profile is None:
-                    term_matched_profile = profile
+                # Second check: if any term from terms_to_check is in the title or description
+                elif any(normalize(term) in normalized_profile_text for term in terms_to_check):
+                    linkedin_founder_profiles.append({
+                        'LinkedIn Title': linkedin_title,
+                        'LinkedIn Description': linkedin_description,
+                        'LinkedIn URL': linkedin_url
+                    })
+                    # Store the first profile that matches
+                    if term_matched_profile is None:
+                        term_matched_profile = profile
 
     # If no match found, use the first matched profile based on terms
     if not linkedin_company_url:
@@ -175,3 +186,10 @@ def search_website_url(startup_data):
     startup_data = pd.concat([data_with_website, data_with_no_website], ignore_index=True)
 
     return startup_data
+
+enterprise_name = "URBANPOS"
+founder_names = "Alexandre Jacmart"
+linkedin_founder_profiles, linkedin_company_url, website_url = linkedin_google_scrape(enterprise_name, founder_names)
+print(f"Founder profile: {linkedin_founder_profiles}")
+print(f"Company profile: {linkedin_company_url}")
+print(f"URL: {website_url}")
