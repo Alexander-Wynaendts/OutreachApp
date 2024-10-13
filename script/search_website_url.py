@@ -186,10 +186,3 @@ def search_website_url(startup_data):
     startup_data = pd.concat([data_with_website, data_with_no_website], ignore_index=True)
 
     return startup_data
-
-enterprise_name = "URBANPOS"
-founder_names = "Alexandre Jacmart"
-linkedin_founder_profiles, linkedin_company_url, website_url = linkedin_google_scrape(enterprise_name, founder_names)
-print(f"Founder profile: {linkedin_founder_profiles}")
-print(f"Company profile: {linkedin_company_url}")
-print(f"URL: {website_url}")
