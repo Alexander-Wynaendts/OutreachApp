@@ -4,4 +4,4 @@ gunicorn
 
 # Data manipulation
 pandas
-request
+requests
