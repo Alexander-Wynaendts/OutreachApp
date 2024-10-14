@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBE Source App</title>
+    <title>List Screen App</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -55,16 +55,17 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-4">Entourage: CBE Sourcing</h1>
+        <h1 class="text-center mb-4">Entourage: List Screening</h1>
 
-        <!-- Form to upload the ZIP file -->
+        <!-- Form to upload the CSV -->
         <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
-          <div class="mb-3">
-              <label for="formFile" class="form-label">Upload ZIP File</label>
-              <input class="form-control" type="file" name="file" id="formFile" accept=".zip" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Run Script</button>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Upload CSV File</label>
+                <input class="form-control" type="file" name="file" id="formFile" accept=".csv" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Run Script</button>
         </form>
+
         <!-- Celebratory Message with Confetti -->
         <div class="mt-3" id="confetti-message">
             🎉 !Your CSV has been downloaded! 🎉
@@ -113,7 +114,7 @@
               // Create a download link and trigger the download
               const link = document.createElement('a');
               link.href = URL.createObjectURL(blob);
-              link.download = 'cbe_screen.csv';
+              link.download = 'affinity_import.csv';
               link.click();
 
               // Show the celebratory message with confetti

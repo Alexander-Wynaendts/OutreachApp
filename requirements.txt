@@ -2,25 +2,5 @@
 Flask
 gunicorn
 
-# Scraping and web automation
-requests
-beautifulsoup4
-
-# Environment variables
-python-dotenv
-
-# OpenAI API
-openai==0.28.0
-
 # Data manipulation
 pandas
-
-# Networking and proxy
-urllib3
-mitmproxy
-
-# Messaging and notifications
-blinker==1.5
-
-# Miscellaneous
-protobuf
