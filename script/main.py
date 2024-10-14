@@ -20,9 +20,6 @@ def main(files):
     # Print the number of filtered rows based on NACE code
     print(f"Nace Code Filter: {len(startup_data)}")
 
-    # Limit the data to the rows between 50 and 100 for processing
-    startup_data = startup_data[250:300]
-
     # Check if startup_data is empty, return it if true
     if startup_data.empty:
         return startup_data
