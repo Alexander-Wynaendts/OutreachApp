@@ -139,6 +139,7 @@ def cbe_analysis(enterprise_number):
         if cbe_info and cbe_info != "-":
             print("Success on the second attempt. Moving forward.")
         else:
+            print(f"Failed scraping {enterprise_number}")
             return (enterprise_number, "-", None, None, None, None, None)
 
     # Extract enterprise name, founder names, email, website, and founding year
