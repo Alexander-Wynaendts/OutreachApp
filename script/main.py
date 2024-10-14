@@ -1,7 +1,5 @@
 from .lemlist_formatting import lemlist_formatting
 import time
-import requests
-import json
 
 def main(startup_data):
 
@@ -19,9 +17,6 @@ def main(startup_data):
 
     # Format the input files
     startup_data = lemlist_formatting(startup_data)
-    response = requests.get(website_url, headers=headers, timeout=10)
-    data = response.json()
-    startup_data["mama"] = json.dumps(data)
 
     # Record the end time and calculate the elapsed time
     end_time = time.time()
