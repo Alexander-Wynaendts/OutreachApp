@@ -26,8 +26,8 @@ def cbe_page_scraping(enterprise_number):
         # Check for CAPTCHA
         captcha_header = soup.find('h3')
         if captcha_header and "CAPTCHA Test" in captcha_header.get_text():
-            print(f"Captcha detected, retrying in 60 seconds...")
-            time.sleep(60)
+            print(f"Captcha detected, retrying in 5 minutes...")
+            time.sleep(300)
             return "-"
 
         # Check if the table with id 'table' is present
@@ -177,7 +177,7 @@ def cbe_screening(startup_data):
     # Define a helper function for processing each row
     def process_enterprise(enterprise_number):
         # Simulating a delay for each request
-        time.sleep(random.uniform(10, 30))  # Random sleep between 1 and 3 seconds
+        time.sleep(random.uniform(20, 40))  # Random sleep between 20 and 40 seconds
         return cbe_analysis(enterprise_number)
 
     # Use ThreadPoolExecutor to process each enterprise in parallel
