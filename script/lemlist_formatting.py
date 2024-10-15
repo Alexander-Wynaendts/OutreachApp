@@ -47,7 +47,7 @@ def lemlist_formatting(startup_data):
     ]
 
     first_email_content_goodbye = [
-        "Best regards",
+        "Best regards,",
         "Hopefully talk soon,"
     ]
 
@@ -64,8 +64,8 @@ def lemlist_formatting(startup_data):
     ]
 
     followup_email_content_goodbye = [
-        "Best",
-        "Best regards"
+        "Best,",
+        "Best regards,"
     ]
 
     rows = []
