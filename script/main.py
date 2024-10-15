@@ -3,12 +3,6 @@ import time
 
 def main(startup_data):
 
-    print("="*60)
-    print("⚠️ WARNING: Process will shut down after 4 hours!")
-    print("If you see more than 'Nace Code Filter: **5000**' messages,")
-    print("please contact the developer immediately to resolve the issue.")
-    print("="*60)
-
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
     website_url = 'http://httpbin.org/ip'
 

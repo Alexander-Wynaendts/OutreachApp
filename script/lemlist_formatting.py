@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import random
 
 def extract_first_last_names(people_column):
     if pd.isna(people_column):
@@ -26,6 +27,10 @@ def extract_first_last_names(people_column):
     return name_email_pairs
 
 def lemlist_formatting(startup_data):
+
+    email_objects = []
+    email_contents = []
+
     # Create a new DataFrame with expanded rows for multiple people
     rows = []
     for index, row in startup_data.iterrows():
@@ -37,10 +42,13 @@ def lemlist_formatting(startup_data):
                 'lastName': last_name,
                 'email': email if email else row['Email'],  # Use the extracted email, or fall back to existing column
                 'linkedinUrl': row['LinkedIn URL'],
-                'companyDomain': row['Website']
+                'companyDomain': row['Website'],
+                # Randomly select from email_objects and email_contents
+                'EmailObject': random.choice(email_objects),
+                'EmailContent': random.choice(email_contents)
             })
 
     # Convert the list of rows into a DataFrame
-    startup_data = pd.DataFrame(rows)
+    formatted_data = pd.DataFrame(rows)
 
-    return startup_data
+    return formatted_data
