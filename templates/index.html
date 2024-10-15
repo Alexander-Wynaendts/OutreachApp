@@ -51,16 +51,32 @@
         #confetti-message::before {
             background-position: top;
         }
+        .info-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-box h5 {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-center mb-4">Entourage: Outreach</h1>
 
+        <!-- Information section about the program -->
+        <div class="info-box">
+            <h5>About the Program</h5>
+            <p>This program formats the exported .csv from the Affinity CRM to make it easy to import into Lemlist for outreach campaigns.</p>
+            <p><strong>Important:</strong> For all companies that you want to contact via email, ensure that the desired person or persons are added in the <u>People</u> column. You can easily do this using the <u>Affinity Chrome extension</u>.</p>
+        </div>
+        <p></p>
         <!-- Form to upload the CSV -->
         <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="formFile" class="form-label">Upload CSV File</label>
+                <label for="formFile" class="form-label">Upload the .csv Affinity Export File</label>
                 <input class="form-control" type="file" name="file" id="formFile" accept=".csv" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Run Script</button>
