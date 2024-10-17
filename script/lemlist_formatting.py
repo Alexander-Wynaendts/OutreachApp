@@ -22,6 +22,10 @@ def extract_first_last_names(people_column):
             first_name = split_name[0]
             last_name = split_name[1] if len(split_name) > 1 else ''
 
+            # If the email contains "info", set it to None
+            if "info" in email.lower():
+                email = None
+
             name_email_pairs.append((first_name, last_name, email))
 
     return name_email_pairs
